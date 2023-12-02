@@ -1,9 +1,8 @@
 package com.github.guramkankava.contoller;
 
 import java.security.Principal;
-import java.util.List;
-import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,10 +39,10 @@ public class ContactController {
     }
 
     @GetMapping
-    public List<ContactResponse> getPageOfContacts(Pageable pageable, ContactRequest contactRequest) {
+    public Page<ContactResponse> getPageOfContacts(Pageable pageable, ContactRequest contactRequest) {
         Contact contact = contactConverter.convertContactRequestToEntity(contactRequest);
         var page = contactPageableSearchService.findPage(pageable, contact);
-        return page.getContent().stream().map(contactConverter::converContactEntityToResponse).collect(Collectors.toList());
+        return page.map(contactConverter::converContactEntityToResponse);
     }
 
     @ResponseStatus(code = HttpStatus.CREATED)
